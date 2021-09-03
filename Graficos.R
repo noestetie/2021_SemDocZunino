@@ -1,30 +1,33 @@
 
-############################################################################
-############################################################################
-###                                                                      ###
-###          5º  ENCUENTRO SINCRÓNICO: GRÁFICOS Y OTRAS HIERBAS          ###
-###                                                                      ###
-############################################################################
-############################################################################
+###########################################################################
+###########################################################################
+###                                                                     ###
+###                               CLASE 6                               ###
+###                       GRÁFICOS SENCILLOS EN R                       ###
+###                                                                     ###
+###########################################################################
+###########################################################################
 
 
 
 
-# Seteamos el directorio de trabajo (este es el de mi compu)
-setwd("~/Desktop/Noe/Docencia/FFyL/2021_Metodologia_DOC/2021_SemDocZunino") #este es el de mi compu
+#### PREPARACIÓN PREVIA ####
+
+# SeteO el directorio de trabajo 
 
 # Cargo los paquetes que voy a usar
-library(tidyverse) #manipular datos
-library(ggplot2) #gráficos
-library(plotly) #gráficos interactivos
+# install.packages("nombre_del_paquete")
+
+library(tidyverse) # manipular datos
+library(ggplot2) # gráficos
+library(plotly) # gráficos interactivos
+
+# cheatsheet: https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf
 
 
 
 
-#################################################################
-##                      DATOS CATEGÓRICOS                      ##
-#################################################################
-
+#### BASE 1 ####
 
 # Cargo la base de datos
 cr.exp1 <- read_csv("cr.exp1.limpio.csv")
@@ -36,91 +39,134 @@ cr.exp1 <- cr.exp1 %>%
 # Cambio las variables que estaban como as.numeric
 cr.exp1 <- cr.exp1 %>% 
   mutate(Part = as_factor(Part),
-         Codunico = as_factor(Codunico)) #item
+         Codunico = as_factor(Codunico)) # item
 
 # Saco 2 participantes problemáticos, leían la oración al final
-cr.exp1 <- filter(cr.exp1, Part != "150") #!= se usa para representar 'no igual a'
+cr.exp1 <- filter(cr.exp1, Part != "150")
 cr.exp1 <- filter(cr.exp1, Part != "19")
 
 # Subset con lo que voy a analizar
 cr.exp1 <- cr.exp1 %>% 
-  filter(Correcta == "TRUE") %>%  #saco rtas erróneas
-  filter(Cond == "N")             #dejo las normales
+  filter(Correcta == "TRUE") %>%
+  filter(Cond == "N")
 
 
-# Veo un resumen de cant. datos, variables y niveles de la base
-summary(cr.exp1)
+# Resumen de la base
 str(cr.exp1)
+summary(cr.exp1)
 
 
 
-### GRÁFICOS: RTAs
+
+#### GRÁFICOS: DATOS CATEGÓRICOS ####
+
+# Grafico RTAs
 
 # 1º capa: data
 ggplot(data = cr.exp1)
+
 
 # 2º capa: "aesthetic mappings" --> mapeos estéticos
 ggplot(data = cr.exp1) +
   aes(x = RTA)
 
+
 # 3º capa: "geom" --> tipo de gráfico
 ggplot(data = cr.exp1) +
   aes(x = RTA) +
-  geom_bar() #el gráfico se genera recién cuando indicamos el tipo de gráfico
+  geom_bar() # el gráfico se genera recién cuando indicamos el tipo de gráfico
 
 ggplot(data = cr.exp1) +
   aes(x = RTA, fill = RC) +
   geom_bar()
+# ¿Qué sucedió?
+
+
+# Disposición de las barras
 
 ggplot(data = cr.exp1) +
-  aes(x = RTA) +
-  geom_bar() +
-  facet_wrap(~ RC) # subdivide
+  aes(x = RTA, fill = RC) +
+  geom_bar(position = "stack") # por default
 
-# cambio la disposición de las barras: dodge, stack, fill
 ggplot(data = cr.exp1) +
   aes(x = RTA, fill = RC) +
   geom_bar(position = "dodge")
 
 ggplot(data = cr.exp1) +
   aes(x = RTA, fill = RC) +
-  geom_bar(position = "stack")
-
-ggplot(data = cr.exp1) +
-  aes(x = RTA, fill = RC) +
   geom_bar(position = "fill")
 
-# cambio el eje: dos opciones
-ggplot(data = cr.exp1) +
-  aes(y = RTA, fill = RC) +
-  geom_bar()
+
+
+
+#### EJERCICIO 1 ####
+
+# a) Colocar las respuestas sobre el eje Y
+# Pista: hay dos opciones: coord_flip()
+
+
+
+
+
+#### SUBDIVISIÓN DEL GRÁFICO ####
+
+# Facet wrap
 
 ggplot(data = cr.exp1) +
-  aes(x = RTA, fill = RC) +
+  aes(x = RTA) +
   geom_bar() +
-  coord_flip()
+  facet_wrap(~ RC)
 
-# Proporciones
+ggplot(data = cr.exp1) +
+  aes(x = RTA) +
+  geom_bar() +
+  facet_wrap(RC ~ Educacion)
+
+# Facet grid
+
+ggplot(data = cr.exp1) +
+  aes(x = RTA) +
+  geom_bar() +
+  facet_grid(RC ~ Educacion)
+
+
+
+
+#### CANTIDAD, PROPORCIÓN Y PORCENTAJE ####
+
+# Proporción
 ggplot(data = cr.exp1) +
   aes(x = RTA, y = ..prop.., group= 1, fill = RC) +
   geom_bar() +
   facet_wrap(~ RC)
 
+
 # Porcentaje
 ggplot(data = cr.exp1) +
   aes(x = RTA, y = ..prop.., group= 1, fill = RC) +
   geom_bar() +
-  facet_wrap(~ RC) +
-  scale_y_continuous(labels = scales::percent_format())
+  facet_wrap(~ RC) + 
+  scale_y_continuous(labels = scales::percent)
+
+ggplot(data = cr.exp1) +
+  aes(x = RTA, y = ..prop.., group= 1, fill = RC) +
+  geom_bar() +
+  facet_wrap(~ RC) + 
+  scale_y_continuous(labels = scales::percent_format(suffix = ""))
 
 
-### Elijo una versión del gráfico y la customizo
+
+
+#### CUSTOMIZACIÓN DE GRÁFICOS ####
+
+# Elijo una versión del gráfico y la customizo
 
 # Cambio nombres: niveles de la variable x
 ggplot(data = cr.exp1) +
   aes(x = RC, fill = RTA) +
   geom_bar(position = "dodge") + 
   scale_x_discrete(labels = c("O"="CR-O", "S"="CR-S"))
+
 
 # Cambio nombres: niveles de la variable y
 ggplot(data = cr.exp1) +
@@ -129,41 +175,63 @@ ggplot(data = cr.exp1) +
   scale_x_discrete(labels = c("O"="CR-O", "S"="CR-S")) +
   scale_fill_discrete(labels = c("SN1"="Adjunción alta", "SN2"="Adjunción baja"))
 
+
 # Agrego título y cambio nombres de las variables
 ggplot(data = cr.exp1) +
   aes(x = RC, fill = RTA) +
   geom_bar(position = "dodge") + 
-  scale_x_discrete(labels = c("O"="CR-O", "S"="CR-S")) +
+  scale_x_discrete(labels = c("O"="objeto", "S"="sujeto")) +
   scale_fill_discrete(labels = c("SN1"="Adjunción alta", "SN2"="Adjunción baja")) +
   labs(title="Preferencias de adjunción según posición de la CR",
        x="Posición de la CR", y = "Cantidad de respuestas", 
        colour="Preferencias de adjunción", fill="Preferencias de adjunción")
 
+
 # Coloco las etiquetas abajo
 ggplot(data = cr.exp1) +
   aes(x = RC, fill = RTA) +
   geom_bar(position = "dodge") + 
-  scale_x_discrete(labels = c("O"="CR-O", "S"="CR-S")) +
+  scale_x_discrete(labels = c("O"="objeto", "S"="sujeto")) +
   scale_fill_discrete(labels = c("SN1"="Adjunción alta", "SN2"="Adjunción baja")) +
   labs(title="Preferencias de adjunción según posición de la CR",
        x="Posición de la CR", y = "Cantidad de respuestas", 
        colour="Preferencias de adjunción", fill="Preferencias de adjunción") + 
   theme(legend.position= "bottom")
 
-### Guardo el gráfico abierto
 
-ggsave('RTAs.png', width = 8, height = 6) #indico las dimensiones
+# Cambio el tema
+
+ggplot(data = cr.exp1) +
+  aes(x = RC, fill = RTA) +
+  geom_bar(position = "dodge") + 
+  scale_x_discrete(labels = c("O"="objeto", "S"="sujeto")) +
+  scale_fill_discrete(labels = c("SN1"="Adjunción alta", "SN2"="Adjunción baja")) +
+  labs(title="Preferencias de adjunción según posición de la CR",
+       x="Posición de la CR", y = "Cantidad de respuestas", 
+       colour="Preferencias de adjunción", fill="Preferencias de adjunción") + 
+  theme(legend.position= "bottom") + 
+  theme_bw
+
+# Guardo el gráfico abierto
+
+ggsave('RTAs.png', width = 8, height = 6) # indico las dimensiones
+
+
+
+
+#### EJERCICIO 2 ####
+
+# a) Probar distintos temas
+# Pista: escriban theme y esperen
 
 
 
 
 
-##################################################################
-##                DATOS CATEGÓRICOS >> CONTINUOS                ##
-##################################################################
+#### DATOS CATEGÓRICOS >> CONTINUOS ####
 
 
-##Sintagmas Simples
+# Sintagmas Simples
 Juicios<-read.csv("Base Juicios SS.csv")
 str(Juicios)
 
