@@ -21,21 +21,6 @@ library(plotly) #gráficos interactivos
 
 
 
-
-##################################################################
-##                  BREVÍSIMA INTRODUCCIÓN A R                  ##
-##################################################################
-
-
-library(cowsay)
-say(what = "Esto recién empieza", by = "smallcat") #prueben what = "catfact" y by = "random"
-# La función es 'say' y los argumentos son 'what' y 'by'
-?say # ? es el comando de ayuda, para ver la documentación de una función
-
-
-
-
-
 #################################################################
 ##                      DATOS CATEGÓRICOS                      ##
 #################################################################
