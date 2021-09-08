@@ -128,7 +128,7 @@ ggplot(data = cr.exp1) +
   aes(x = RTA) +
   geom_bar() +
   facet_grid(RC ~ Educacion)
-
+# ¿Cuál es la diferencia con facet_wrap?
 
 
 
@@ -210,7 +210,7 @@ ggplot(data = cr.exp1) +
        x="Posición de la CR", y = "Cantidad de respuestas", 
        colour="Preferencias de adjunción", fill="Preferencias de adjunción") + 
   theme(legend.position= "bottom") + 
-  theme_bw
+  theme_bw()
 
 # Guardo el gráfico abierto
 
@@ -228,12 +228,10 @@ ggsave('RTAs.png', width = 8, height = 6) # indico las dimensiones
 
 
 
-#### DATOS CATEGÓRICOS >> CONTINUOS ####
+#### DATOS CATEGÓRICOS >> CONTINUOS 1 ####
 
-
-# Sintagmas Simples
+# Cargo otra base
 Juicios<-read.csv("Base Juicios SS.csv")
-str(Juicios)
 
 # Renombro niveles de algunas variables
 Juicios <- Juicios %>% 
@@ -252,13 +250,14 @@ Juicios <- Juicios %>%
 
 Juicios$Aceptabilidad<-as.numeric(Juicios$Aceptabilidad)
 
+
 # Genero nueva tabla para graficar
 SS.Aceptabilidad <- Juicios %>% 
   group_by(Identidad.de.genero, Estereotipia, Morfologia) %>% 
-  summarize(M = mean(Aceptabilidad), SE = sd(Aceptabilidad)/sqrt(n())) #square root, raíz cuadrada
+  summarize(M = mean(Aceptabilidad), SE = sd(Aceptabilidad)/sqrt(n())) # square root, raíz cuadrada
 
 
-### GRÁFICOS
+# Grafico
 
 boxplot(SS.Aceptabilidad$M ~ SS.Aceptabilidad$Morfologia)
 
@@ -266,9 +265,11 @@ ggplot(data = SS.Aceptabilidad) +
   aes(x = Morfologia, y = M) +
   geom_boxplot()
 
+# Customizo el gráfico
+
 ggplot(data = SS.Aceptabilidad) +
   aes(x = Morfologia, y = M) +
-  geom_boxplot(fill="slateblue", alpha=0.4, width=.8) #alpha agregar transparencia
+  geom_boxplot(fill="slateblue", alpha=0.4, width=.8) # alpha agregar transparencia
 
 ggplot(data = SS.Aceptabilidad) +
   aes(x = Morfologia, y = M, fill = Morfologia) +
@@ -278,6 +279,18 @@ ggplot(data = SS.Aceptabilidad) +
   aes(x = Morfologia, y = M, fill = Morfologia) +
   geom_boxplot() +
   scale_fill_brewer(palette="Set2") #otras paletas: Accent; Dark2; Set1
+
+
+
+
+#### EJERCICIO 4 ####
+
+# a) Cambiar el nombre de los ejes y agregar título al último gráfico
+
+
+
+
+#### COMBINACIÓN DE GRÁFICOS ####
 
 ggplot(data = SS.Aceptabilidad) +
   aes(x = Identidad.de.genero, y = M, fill = Identidad.de.genero) +
@@ -289,14 +302,26 @@ ggplot(data = SS.Aceptabilidad) +
 
 ggplot(data = SS.Aceptabilidad) +
   aes(x = Identidad.de.genero, y = M, fill = Identidad.de.genero) +
-  geom_boxplot(alpha=0.5) +
-  geom_violin(alpha=0.5) #se puede combinar gráficos
+  geom_boxplot() +
+  geom_violin()
+# ¿Cómo puedo mejorar el gráfico?
 
 ggplot(data = SS.Aceptabilidad) +
-  aes(x = M, group = Identidad.de.genero, fill = Identidad.de.genero) +
-  geom_density(alpha=.4)
+  aes(x = Identidad.de.genero, y = M, fill = Identidad.de.genero) +
+  geom_boxplot(alpha=0.5) +
+  geom_point()
 
-# Gráfico completo
+ggplot(data = SS.Aceptabilidad) +
+  aes(x = Identidad.de.genero, y = M, fill = Identidad.de.genero) +
+  geom_boxplot(alpha=0.5) +
+  geom_violin(alpha=0.5) +
+  geom_point()
+
+
+
+
+#### GRÁFICO INTERACTIVO ####
+
 g1<-ggplot(data = SS.Aceptabilidad) +
   aes(x = Estereotipia, y = M, colour = Morfologia, shape = Identidad.de.genero) +
   geom_hline(aes(yintercept=0), linetype=3) +
@@ -304,22 +329,32 @@ g1<-ggplot(data = SS.Aceptabilidad) +
   geom_errorbar(aes(max=M+SE, min=M-SE), width=.1) +
   labs(title= "Medias juicios de aceptabilidad por estereotipicidad y morfología", 
        y="Media", x= "Estereotipicidad", colour="Morfología", shape= "Identidad de género")
+
 ggplotly(g1)
 
-## Otra forma de graficar los mismos datos:
+
+
+
+#### DATOS CATEGÓRICOS >> CONTINUOS 2 ####
 
 # Filtro aceptabilidad > 5
 Juicios.Aceptable <- filter(Juicios, Aceptabilidad > 5)
 
 # Creo una tabla con las frecuencias de aceptabilidad alta
-tabla3<-table(Juicios.Aceptable$Identidad.de.genero, 
+tabla<-table(Juicios.Aceptable$Identidad.de.genero, 
               Juicios.Aceptable$Morfologia, 
               Juicios.Aceptable$Estereotipia) %>% 
   as.data.frame()
 
-# Gráfico Juicios x estereotipia x morfología x género
-ggplot(data = tabla3) +
-  aes(x = Var3, y = Freq, colour = Var2, shape = Var1, group = Var2:Var1) +
+# Gráfico Juicios x estereotipicidad x morfología x género
+
+ggplot(data = tabla) +
+  aes(x = Var3, y = Freq, colour = Var2, shape = Var1) + 
+  geom_point(size=5) +
+  geom_line(size=1)
+
+ggplot(data = tabla) +
+  aes(x = Var3, y = Freq, colour = Var2, shape = Var1, group = Var2:Var1) + # group marca qué van a conectar las líneas
   geom_point(size=5) +
   geom_line(size=1) +
   labs(title= "Experimento 1: Aceptación alta por estereotipicidad y morfología", 
@@ -329,11 +364,7 @@ ggplot(data = tabla3) +
 
 
 
-
-#################################################################
-##                       DATOS CONTINUOS                       ##
-#################################################################
-
+#### DATOS CONTINUOS ####
 
 # Cargo la base de datos
 genero <- read.csv("Exp.oraciones1.limpio.csv")
@@ -361,134 +392,90 @@ hist(genero$RTrta, freq = F, breaks = 40)
 
 ggplot(data = genero) +
   aes(x = RTrta) +
-  geom_histogram(bins=40) #prueben poner bins= 30 y luego cambiar el número
+  geom_histogram(bins=30)
 
 ggplot(data = genero) +
   aes(x = RTrta) +
   geom_density()
 
+
+
+
+#### EJERCICIO 4 ####
+
+# a) Hacer el histograma con ggplot en base logarítmica
+
+
+# b) Hacer el gráfico de densidad con ggplot en base logarítmica, agregarle color y transparencia
+
+
+
+
+#### TESTEO DE NORMALIDAD ####
+
 # Gráficos de cuantiles (QQ)
 qqnorm(genero$RTrta)
 qqline(genero$RTrta)
 
-install.packages("car")
+# install.packages("car")
 library(car)
 qqp(genero$RTrta, "norm")
 qqp(genero$RTrta, "lnorm")
 
 
-# Descriptivos: media, desvíos
-genero %>% 
-  group_by(Morfologia) %>% 
-  summarize(mean(RTrta), sd(RTrta)) %>% 
-  ungroup()
-
-genero %>% 
-  group_by(Estereotipia, Morfologia) %>% 
-  summarize(mean(RTrta), sd(RTrta), mean(RTrta)+2*sd(RTrta)) %>% 
-  ungroup()
-
-# Nombro las columnas de la tabla generada
-genero %>% 
-  group_by(Estereotipia, Morfologia) %>% 
-  summarize(mean = mean(RTrta), sd = sd(RTrta), corte_outliers = mean(RTrta)+2*sd(RTrta)) %>% 
-  ungroup()
-
-ggplot(genero) + 
-  aes(x=Estereotipia,y=RTrta) +
-  geom_jitter(aes(colour=RTA))
-
-# Gráfico interactivo
-g1<-ggplot(genero) + 
-  aes(x=Morfologia,y=RTrta) +
-  geom_jitter(aes(colour=RTA))
-ggplotly(g1)
 
 
-# ANOVAs
+#### EJERCICIO 5 ####
 
-m1 <- aov(RTrta ~ RTA, genero) #ANOVA
-summary(m1) #veo los resultados de la anova
-TukeyHSD(m1) #test post hoc
-
-genero %>% 
-  group_by(RTA) %>% 
-  summarize(mean(RTrta)) %>% 
-  ungroup()
-
-m2 <- aov(RTrta ~ RTA + Morfologia, genero)
-summary(m2)
-TukeyHSD(m2)
-
-m3 <- aov(RTrta ~ RTA + Morfologia + Estereotipia, genero)
-summary(m3)
-TukeyHSD(m3)
-
-m4 <- aov(RTrta ~ RTA * Morfologia, genero)
-summary(m4)
-TukeyHSD(m4)
-
-m5 <- aov(RTrta ~ RTA * Morfologia * Estereotipia, genero)
-summary(m5)
-TukeyHSD(m5)
-
-m6 <- aov(RTrta ~ RTA * Estereotipia + Morfologia, genero)
-summary(m6)
-TukeyHSD(m6)
-
-# Comparo modelos: Akaike Information Criterion (AIC)
-AIC(m1, m2, m3, m4, m5, m6)
-BIC(m1, m2, m3, m4, m5, m6)
+# a) Obtener medias y desvíos de las RTrta
 
 
-#Gráfico de perfiles >> efectos principales e interacciones
 
-medias <- aggregate(RTrta ~ Morfologia + Estereotipia, genero, mean)
-ggplot(medias) +
-  aes(x = Estereotipia, y = RTrta, colour = Morfologia, 
-      group = Morfologia, linetype = Morfologia, shape = Morfologia) +
-  geom_line(size=.6) + 
-  geom_point(size = 3)
 
-ggplot(medias) +
-  aes(x = Morfologia, y = RTrta, colour = Estereotipia, 
-      group = Estereotipia, linetype = Estereotipia, shape = Estereotipia) +
-  geom_line(size=.6) + 
-  geom_point(size = 3)
 
-medias <- aggregate(RTrta ~ RTA + Morfologia + Estereotipia, genero, mean)
-ggplot(medias) +
-  aes(x = Estereotipia, y = RTrta, colour = Morfologia, 
+#### GRÁFICO DE PERFILES >> EFECTOS PRINCIPALES E INTERACCIONES ####
+
+medias_rta <- genero %>% 
+  dplyr::group_by(RTA, Morfologia) %>% 
+  summarize(M = mean(RTrta), SE = sd(RTrta)/sqrt(n()))
+
+ggplot(medias_rta) +
+  aes(x = RTA, y = M, colour = Morfologia, 
       group = Morfologia, linetype = Morfologia, shape = Morfologia) +
   geom_line(size=.6) + 
   geom_point(size = 3) +
-  facet_wrap(~RTA)
+  geom_errorbar(aes(max=M+SE, min=M-SE), width=.1)
+# Ver con plotly: ggplotly()
 
-medias <- aggregate(RTrta ~ RTA + Morfologia + Estereotipia + Genero, genero, mean)
-ggplot(medias) +
-  aes(x = Estereotipia, y = RTrta, colour = Morfologia, 
+
+medias_rta <- genero %>% 
+  dplyr::group_by(RTA, Morfologia, Estereotipia) %>% 
+  summarize(M = mean(RTrta))
+
+ggplot(medias_rta) +
+  aes(x = Estereotipia, y = M, colour = Morfologia, 
       group = Morfologia, linetype = Morfologia, shape = Morfologia) +
   geom_line(size=.6) + 
   geom_point(size = 3) +
-  facet_grid(Genero ~ RTA) #probar dif con facet_wrap
+  facet_wrap(~ RTA)
 
 
-medias <- aggregate(RToracion ~ Morfologia + Estereotipia + Genero, genero, mean)
-ggplot(medias) +
-  aes(x = Estereotipia, y = RToracion, colour = Morfologia, 
+medias_rta <- genero %>% 
+  dplyr::group_by(RTA, Morfologia, Estereotipia, Genero) %>% 
+  summarize(M = mean(RTrta))
+
+ggplot(medias_rta) +
+  aes(x = Estereotipia, y = M, colour = Morfologia, 
       group = Morfologia, linetype = Morfologia, shape = Morfologia) +
   geom_line(size=.6) + 
   geom_point(size = 3) +
-  facet_wrap(~ Genero)
+  facet_grid (RTA ~ Genero)
 
 
 
 
 
-##################################################################
-##                         LINKS ÚTILES                         ##
-##################################################################
-
+#### LINKS ÚTILES ####
 
 # R Graph Gallery: https://www.r-graph-gallery.com
 # Tidyverse: https://www.tidyverse.org/
