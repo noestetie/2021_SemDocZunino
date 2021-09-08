@@ -13,6 +13,8 @@
 
 #### ENTRADA EN CALOR ####
 
+# Creao un proyecto o abro el proyecto del zip
+
 # Instalo los paquetes que voy a utilizar
 install.packages("cosway")
 
@@ -49,7 +51,7 @@ say(what = "Esto recién empieza", by = "smallcat")
 
 #### PREPARACIÓN ####
 
-# Seteo el directorio de trabajo
+# Seteo el directorio de trabajo (no es necesario si estamos en un proyecto)
 setwd("~/Desktop/Noe/Docencia/FFyL/2021_Metodologia_DOC/2021_SemDocZunino") #este es el de mi compu
 
 # Cargo y nombro la base de datos
@@ -60,6 +62,7 @@ cr.exp1 <- read_csv("cr.exp1.limpio.csv")
 # - correr línea(s) de código: Ctrl + Enter
 # - insertar <-: Alt + -
 # - insertar %>%: Ctrl + Shift + M
+# - insertar ~: Alt + Ñ
 
 
 
@@ -77,9 +80,8 @@ tail(cr.exp1)
 
 #### EJERCICIO 3 ####
 
-# ?funcion es el comando de ayuda, para ver la documentación de una función
-
 # a) Mostrar las primeras 3 filas de la tabla
+# Pista: comando de ayuda ?tail
 
 
 # b) Mostrar las últimas 4 filas de la tabla
@@ -145,6 +147,25 @@ cr.exp1_correctas <- filter(cr.exp1, Correcta == "TRUE") # saco rtas erróneas
 cr.exp1_correctas$Educacion <- factor(cr.exp1_correctas$Educacion, 
                                      levels = c("secundario incompleto", "secundario",
                                                 "universitario incompleto", "universitario"))
+
+# Renombro niveles de una variable
+
+# Op. 1
+cr.exp1_correctas$Educacion <- as.character(cr.exp1_correctas$Educacion)
+cr.exp1_correctas$Educacion[cr.exp1_correctas$Educacion == "secundario incompleto"] <- "sec inc"
+cr.exp1_correctas$Educacion[cr.exp1_correctas$Educacion == "secundario"] <- "sec"
+cr.exp1_correctas$Educacion[cr.exp1_correctas$Educacion == "universitario incompleto"] <- "uni inc"
+cr.exp1_correctas$Educacion[cr.exp1_correctas$Educacion == "universitario"] <- "uni"
+cr.exp1_correctas$Educacion <- as.factor(cr.exp1_correctas$Educacion)
+
+levels(cr.exp1_correctas$Educacion)
+cr.exp1_correctas$Educacion <- factor(cr.exp1_correctas$Educacion,levels = c("sec inc", "sec", "uni inc", "uni"))
+
+# Op. 2
+levels(cr.exp1_correctas$Educacion) <- c("secundario incompleto", 
+                                         "secundario", 
+                                         "universitario incompleto", 
+                                         "universitario")
 
 
 
