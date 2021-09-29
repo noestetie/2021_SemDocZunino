@@ -13,7 +13,7 @@
 
 #### ENTRADA EN CALOR ####
 
-# Creao un proyecto o abro el proyecto del zip
+# Creo un proyecto o abro el proyecto de la carpeta zipeada
 
 # Instalo los paquetes que voy a utilizar
 install.packages("cosway")
@@ -51,8 +51,8 @@ say(what = "Esto recién empieza", by = "smallcat")
 
 #### PREPARACIÓN ####
 
-# Seteo el directorio de trabajo (no es necesario si estamos en un proyecto)
-setwd("~/Desktop/Noe/Docencia/FFyL/2021_Metodologia_DOC/2021_SemDocZunino") #este es el de mi compu
+# Seteo el directorio de trabajo o establezco al proyecto como directorio de trabajo
+
 
 # Cargo y nombro la base de datos
 cr.exp1 <- read_csv("cr.exp1.limpio.csv")
@@ -81,7 +81,7 @@ tail(cr.exp1)
 #### EJERCICIO 3 ####
 
 # a) Mostrar las primeras 3 filas de la tabla
-# Pista: comando de ayuda ?tail
+# Pista: comando de ayuda ?head
 
 
 # b) Mostrar las últimas 4 filas de la tabla
