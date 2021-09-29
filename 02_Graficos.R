@@ -13,7 +13,7 @@
 
 #### PREPARACIÓN PREVIA ####
 
-# SeteO el directorio de trabajo 
+# Seteo el directorio de trabajo 
 
 # Cargo los paquetes que voy a usar
 # install.packages("nombre_del_paquete")
@@ -22,7 +22,7 @@ library(tidyverse) # manipular datos
 library(ggplot2) # gráficos
 library(plotly) # gráficos interactivos
 
-# cheatsheet: https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf
+# Cheatsheet ggplot2: https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf
 
 
 
@@ -200,7 +200,6 @@ ggplot(data = cr.exp1) +
 
 
 # Cambio el tema
-
 ggplot(data = cr.exp1) +
   aes(x = RC, fill = RTA) +
   geom_bar(position = "dodge") + 
@@ -212,8 +211,8 @@ ggplot(data = cr.exp1) +
   theme(legend.position= "bottom") + 
   theme_bw()
 
-# Guardo el gráfico abierto
 
+# Guardo el gráfico abierto
 ggsave('RTAs.png', width = 8, height = 6) # indico las dimensiones
 
 
@@ -222,7 +221,7 @@ ggsave('RTAs.png', width = 8, height = 6) # indico las dimensiones
 #### EJERCICIO 2 ####
 
 # a) Probar distintos temas
-# Pista: escriban theme y esperen
+# Pista: escribir theme y esperar
 
 
 
@@ -283,7 +282,7 @@ ggplot(data = SS.Aceptabilidad) +
 
 
 
-#### EJERCICIO 4 ####
+#### EJERCICIO 3 ####
 
 # a) Cambiar el nombre de los ejes y agregar título al último gráfico
 
@@ -425,13 +424,6 @@ qqp(genero$RTrta, "lnorm")
 
 
 
-#### EJERCICIO 5 ####
-
-# a) Obtener medias y desvíos de las RTrta
-
-
-
-
 
 #### GRÁFICO DE PERFILES >> EFECTOS PRINCIPALES E INTERACCIONES ####
 
@@ -487,3 +479,4 @@ ggplot(medias_rta) +
 # Instructivos paso a paso de ggplot: http://www.cookbook-r.com/Graphs/
 # Instructivo interactivo con ejemplos de todas las scales: https://ggplot2tor.com/scales/
 # Color Brewer: https://colorbrewer2.org/
+# Lista de todas las paletas disponibles en R: https://github.com/EmilHvitfeldt/r-color-palettes
