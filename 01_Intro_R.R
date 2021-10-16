@@ -16,7 +16,7 @@
 # Creo un proyecto o abro el proyecto de la carpeta zipeada
 
 # Instalo los paquetes que voy a utilizar
-install.packages("cosway")
+install.packages("cowsay")
 
 # Cargo los paquetes ya instalados
 library(cowsay)
